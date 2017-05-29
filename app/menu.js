@@ -1,10 +1,6 @@
 // @flow
 import { app, Menu, shell, BrowserWindow } from 'electron';
 
-console.log(`
-  OSDFJDSKKL
-`);
-
 export default class MenuBuilder {
   mainWindow: BrowserWindow;
 

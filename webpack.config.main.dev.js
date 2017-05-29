@@ -3,9 +3,6 @@
 import path from 'path';
 import webpack from 'webpack';
 
-const dll = path.resolve(process.cwd(), 'dll');
-const manifest = path.resolve(dll, 'mainVendor.json');
-
 export default {
   devtool: 'inline-source-map',
 
@@ -13,7 +10,7 @@ export default {
 
   entry: [
     'webpack/hot/poll?1000',
-    // 'webpack/hot/only-dev-server',
+    'webpack/hot/only-dev-server',
     path.join(__dirname, 'app/main.dev.js'),
   ],
 
@@ -34,16 +31,12 @@ export default {
 
   output: {
     path: path.join(__dirname, 'app'),
+    hotUpdateChunkFilename: '../dll/hot/[id].[hash].hot-update.js',
+    hotUpdateMainFilename: '../dll/hot/[hash].hot-update.json',
     filename: 'main.js'
   },
 
   plugins: [
-    // new webpack.DllReferencePlugin({
-    //   context: process.cwd(),
-    //   manifest: require(manifest),
-    //   sourceType: 'commonjs2',
-    // }),
-
     /**
      * https://webpack.js.org/concepts/hot-module-replacement/
      */
