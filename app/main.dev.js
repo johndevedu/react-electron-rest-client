@@ -15,6 +15,8 @@ import MenuBuilder from './menu';
 
 let mainWindow = null;
 
+const __dirname = '/Users/amila/Documents/Projects/electron-react-boilerplate/app';
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
@@ -84,3 +86,7 @@ app.on('ready', async () => {
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 });
+
+if (module.hot) {
+  module.hot.accept();
+}

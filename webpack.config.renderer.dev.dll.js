@@ -200,6 +200,6 @@ export default merge.smart(baseConfig, {
           path: path.resolve(process.cwd(), 'dll'),
         },
       },
-    })
+    }),
   ],
 });
