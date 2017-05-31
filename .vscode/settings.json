@@ -7,6 +7,8 @@
     "app/dist": true,
     "app/main.prod.js": true,
     "app/main.prod.js.map": true,
+    "app/main.dev.js": true,
+    "app/main.dev.js.map": true,
     "bower_components": true,
     "dll": true,
     "flow-typed": true,

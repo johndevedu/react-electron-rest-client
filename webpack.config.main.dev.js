@@ -11,7 +11,7 @@ export default {
   entry: [
     'webpack/hot/poll?1000',
     'webpack/hot/only-dev-server',
-    path.join(__dirname, 'app/main.dev.js'),
+    path.join(__dirname, 'app/main.js'),
   ],
 
   module: {
@@ -29,11 +29,38 @@ export default {
     }]
   },
 
+  stats: {
+    assets: false,
+    cached: false,
+    cachedAssets: false,
+    children: false,
+    chunks: false,
+    chunkModules: false,
+    chunkOrigins: false,
+    colors: false,
+    depth: false,
+    entrypoints: false,
+    errors: true,
+    errorDetails: true,
+    hash: false,
+    maxModules: 0,
+    modules: false,
+    performance: false,
+    providedExports: false,
+    publicPath: false,
+    reasons: false,
+    source: false,
+    timings: false,
+    usedExports: false,
+    version: false,
+    warnings: false
+  },
+
   output: {
     path: path.join(__dirname, 'app'),
     hotUpdateChunkFilename: '../dll/hot/[id].[hash].hot-update.js',
     hotUpdateMainFilename: '../dll/hot/[hash].hot-update.json',
-    filename: 'main.js'
+    filename: 'main.dev.js'
   },
 
   plugins: [
