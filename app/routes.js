@@ -11,7 +11,7 @@ export default () => (
     <Switch>
       <Route path="/counter" component={CounterPage} />
       <Route path="/request" component={RequestPage} />
-      <Route path="/" component={HomePage} />
+      <Route path="/" component={RequestPage} />
     </Switch>
   </App>
 );
