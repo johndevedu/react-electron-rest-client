@@ -1,9 +1,30 @@
 import React, { Component } from "react";
-import styles from "./RequestPage.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-export default class RequestPage extends Component {
+import { withStyles } from "@material-ui/core/styles";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
+import { Button, Typography } from "../../node_modules/@material-ui/core";
+
+const styles = theme => ({
+  container: {
+    display: "flex",
+    flexWrap: "wrap"
+  },
+  formControl: {
+    margin: theme.spacing.unit
+  },
+  formControlWide: {
+    minWidth: "400px"
+  }
+});
+
+class RequestPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,6 +44,7 @@ export default class RequestPage extends Component {
   }
 
   onSend(e) {
+    e.preventDefault();
     const config = {
       method: this.state.methodType
     };
@@ -35,40 +57,55 @@ export default class RequestPage extends Component {
   }
 
   render() {
+    const { classes } = this.props;
+
     return (
       <div>
-        <div className={styles.backButton} data-tid="backButton">
-          <Link to="/">
-            <i className="fa fa-arrow-left fa-3x" />
-          </Link>
-        </div>
-        <h1>Request Page</h1>
-        <form>
-          <div className="form-control">
-            <select
-              name="methodType"
-              onChange={this.onChange}
-              value={this.state.methodType}
+        <div className={classes.container}>
+          <Typography variant="title" gutterBottom>
+            Request
+          </Typography>
+          <form onSubmit={this.onSend}>
+            <FormControl className={classes.formControl}>
+              <InputLabel htmlFor="method-type">METHOD TYPE</InputLabel>
+              <Select
+                value={this.state.methodType}
+                onChange={this.onChange}
+                inputProps={{
+                  name: "methodType",
+                  id: "method-type"
+                }}
+              >
+                <MenuItem value="GET">GET</MenuItem>
+                <MenuItem value="POST">POST</MenuItem>
+                <MenuItem value="PUT">PUT</MenuItem>
+                <MenuItem value="DELETE">DELETE</MenuItem>
+                <MenuItem value="PATCH">PATCH</MenuItem>
+              </Select>
+            </FormControl>
+
+            <FormControl
+              className={[classes.formControl, classes.formControlWide]}
             >
-              <label>METHOD TYPE</label>
-              <option value="GET">GET</option>
-              <option value="POST">POST</option>
-              <option value="PUT">PUT</option>
-              <option value="DELETE">DELETE</option>
-              <option value="PATCH">PATCH</option>
-            </select>
-          </div>
-          <div className="form-control">
-            <label>url</label>
-            <input name="url" onChange={this.onChange} value={this.state.url} />
-          </div>
-          <button type="submit" onClick={this.onSend}>
-            SEND
-          </button>
-        </form>
-        <h2>Response</h2>
+              <InputLabel htmlFor="url">URL</InputLabel>
+              <Input
+                id="url"
+                name="url"
+                value={this.state.url}
+                onChange={this.onChange}
+              />
+            </FormControl>
+            <Button onClick={this.onSend}>SEND</Button>
+          </form>
+        </div>
+
+        <Typography variant="title" gutterBottom>
+          Response
+        </Typography>
         <pre>{JSON.stringify(this.state.data, null, 2)}</pre>
       </div>
     );
   }
 }
+
+export default withStyles(styles)(RequestPage);
