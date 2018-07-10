@@ -7,7 +7,8 @@ export default class RequestPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      url: "",
+      methodType: "GET",
+      url: "http://localhost:8080/api/hackers",
       data: []
     };
 
@@ -23,7 +24,7 @@ export default class RequestPage extends Component {
 
   onSend(e) {
     const config = {
-      method: "GET"
+      method: this.state.methodType
     };
 
     axios(this.state.url, config).then(response => {
@@ -44,10 +45,24 @@ export default class RequestPage extends Component {
         <h1>Request Page</h1>
         <form>
           <div className="form-control">
-            <label>url</label>
-            <input name="url" onChange={this.onChange} />
+            <select
+              name="methodType"
+              onChange={this.onChange}
+              value={this.state.methodType}
+            >
+              <label>METHOD TYPE</label>
+              <option value="GET">GET</option>
+              <option value="POST">POST</option>
+              <option value="PUT">PUT</option>
+              <option value="DELETE">DELETE</option>
+              <option value="PATCH">PATCH</option>
+            </select>
           </div>
-          <button type="button" onClick={this.onSend}>
+          <div className="form-control">
+            <label>url</label>
+            <input name="url" onChange={this.onChange} value={this.state.url} />
+          </div>
+          <button type="submit" onClick={this.onSend}>
             SEND
           </button>
         </form>
