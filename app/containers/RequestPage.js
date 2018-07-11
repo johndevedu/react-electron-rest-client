@@ -10,6 +10,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import { Button, Typography, Grid } from "../../node_modules/@material-ui/core";
+import RequestBody from "./RequestBody";
 
 const styles = theme => ({
   container: {
@@ -24,12 +25,16 @@ const styles = theme => ({
   }
 });
 
+const httpMethods = ["GET", "POST", "PUT", "DELETE", "PATCH"];
+const httpMethodsWithBody = ["POST", "PUT", "PATCH"];
+
 class RequestPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       methodType: "GET",
       url: "http://localhost:8080/api/hackers",
+      requestBody: "",
       data: []
     };
 
@@ -45,9 +50,18 @@ class RequestPage extends Component {
 
   onSend(e) {
     e.preventDefault();
+    const selectedMethod = this.state.methodType;
     const config = {
-      method: this.state.methodType
+      method: selectedMethod
     };
+
+    if (
+      httpMethodsWithBody.includes(selectedMethod) &&
+      this.state.requestBody
+    ) {
+      const parsedBody = JSON.parse(this.state.requestBody);
+      config.data = parsedBody;
+    }
 
     axios(this.state.url, config).then(response => {
       this.setState({
@@ -61,13 +75,12 @@ class RequestPage extends Component {
 
     return (
       <div>
-        {/* <div className={classes.container}> */}
         <Typography variant="title" gutterBottom>
           Request
         </Typography>
+
         <form onSubmit={this.onSend}>
           <Grid container spacing={24} style={{ padding: 24 }}>
-            {/* <Grid item sm={4}> */}
             <FormControl className={classes.formControl}>
               <InputLabel htmlFor="method-type">METHOD TYPE</InputLabel>
               <Select
@@ -78,16 +91,13 @@ class RequestPage extends Component {
                   id: "method-type"
                 }}
               >
-                <MenuItem value="GET">GET</MenuItem>
-                <MenuItem value="POST">POST</MenuItem>
-                <MenuItem value="PUT">PUT</MenuItem>
-                <MenuItem value="DELETE">DELETE</MenuItem>
-                <MenuItem value="PATCH">PATCH</MenuItem>
+                {httpMethods.map(method => (
+                  <MenuItem key={method} value={method}>
+                    {method}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
-            {/* </Grid> */}
-
-            {/* <Grid item sm={6}> */}
             <FormControl
               className={[classes.formControl, classes.formControlWide]}
             >
@@ -99,13 +109,14 @@ class RequestPage extends Component {
                 onChange={this.onChange}
               />
             </FormControl>
-            {/* </Grid> */}
-            {/* <Grid item sm={2}> */}
             <Button onClick={this.onSend}>SEND</Button>
-            {/* </Grid> */}
           </Grid>
         </form>
-        {/* </div> */}
+
+        {httpMethodsWithBody.includes(this.state.methodType) && (
+          <RequestBody onChange={this.onChange} />
+        )}
+
         <Typography variant="title" gutterBottom>
           Response
         </Typography>
