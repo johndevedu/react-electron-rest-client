@@ -9,7 +9,7 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import { Button, Typography } from "../../node_modules/@material-ui/core";
+import { Button, Typography, Grid } from "../../node_modules/@material-ui/core";
 
 const styles = theme => ({
   container: {
@@ -61,11 +61,13 @@ class RequestPage extends Component {
 
     return (
       <div>
-        <div className={classes.container}>
-          <Typography variant="title" gutterBottom>
-            Request
-          </Typography>
-          <form onSubmit={this.onSend}>
+        {/* <div className={classes.container}> */}
+        <Typography variant="title" gutterBottom>
+          Request
+        </Typography>
+        <form onSubmit={this.onSend}>
+          <Grid container spacing={24} style={{ padding: 24 }}>
+            {/* <Grid item sm={4}> */}
             <FormControl className={classes.formControl}>
               <InputLabel htmlFor="method-type">METHOD TYPE</InputLabel>
               <Select
@@ -83,7 +85,9 @@ class RequestPage extends Component {
                 <MenuItem value="PATCH">PATCH</MenuItem>
               </Select>
             </FormControl>
+            {/* </Grid> */}
 
+            {/* <Grid item sm={6}> */}
             <FormControl
               className={[classes.formControl, classes.formControlWide]}
             >
@@ -95,10 +99,13 @@ class RequestPage extends Component {
                 onChange={this.onChange}
               />
             </FormControl>
+            {/* </Grid> */}
+            {/* <Grid item sm={2}> */}
             <Button onClick={this.onSend}>SEND</Button>
-          </form>
-        </div>
-
+            {/* </Grid> */}
+          </Grid>
+        </form>
+        {/* </div> */}
         <Typography variant="title" gutterBottom>
           Response
         </Typography>
