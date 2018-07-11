@@ -20,6 +20,33 @@ On the other hand, while other REST clients might have nice interfaces, they tak
 #### Easy to contribute
 I think the first two objectives are attainable, but it would take me a long time to achieve. Therefore, I want to keep the codebase easy to contribute to. Hopefully, we can achieve this third goal w/o sacrificing too much in terms of maintainability, scalability, and other best practices.
 
+## Usage
+Binary install is coming soon. In the meantime, it is simple to compile from source to run the app. Full instructions are available at the [electron-react-boilerplate](https://github.com/chentsulin/electron-react-boilerplate) site. Short version is provided below:
+
+### Install
+
+* **Note: requires a node version >= 7 and an npm version >= 4.**
+
+First, clone the repo via git:
+
+```bash
+$ git clone --depth=1 https://github.com/johnwoolee/react-electron-rest-client.git your-project-name
+```
+
+And then install dependencies with npm.
+
+```bash
+$ cd your-project-name
+$ npm install
+```
+
+### Run
+
+Start the app in the `dev` environment.
+
+```bash
+$ npm run dev
+```
 
 ## Immediate Future
 #### Proof of Concept
