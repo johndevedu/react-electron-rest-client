@@ -8,14 +8,45 @@ For the initial version, it is based on the [electron-react-boilerplate](https:/
 ## Main Objectives
 
 #### Simple
-There are simple REST clients out there, but some parts of the simple interface are not intuitive.
+There are simple REST clients out there, but some parts of the simple interface are not intuitive. RERC focuses on intuitive UI:
+
+![intuitive interface](https://user-images.githubusercontent.com/5439943/42554895-6282606a-849b-11e8-8601-860848640326.gif)
 
 #### Fast to load
-On the other hand, while other REST clients have nice interfaces, they take forever to load.
+On the other hand, while other REST clients might have nice interfaces, they take forever to load. RERC focuses on fast load times. Real-time load time:
+
+![fast load times](https://user-images.githubusercontent.com/5439943/42554806-1cf0dc5c-849b-11e8-9ef4-e833cb8810ce.gif)
 
 #### Easy to contribute
 I think the first two objectives are attainable, but it would take me a long time to achieve. Therefore, I want to keep the codebase easy to contribute to. Hopefully, we can achieve this third goal w/o sacrificing too much in terms of maintainability, scalability, and other best practices.
 
+## Usage
+Binary install is coming soon. In the meantime, it is simple to compile from source to run the app. Full instructions are available at the [electron-react-boilerplate](https://github.com/chentsulin/electron-react-boilerplate) site. Short version is provided below:
+
+### Install
+
+* **Note: requires a node version >= 7 and an npm version >= 4.**
+
+First, clone the repo via git:
+
+```bash
+$ git clone --depth=1 https://github.com/johnwoolee/react-electron-rest-client.git your-project-name
+```
+
+And then install dependencies with npm.
+
+```bash
+$ cd your-project-name
+$ npm install
+```
+
+### Run
+
+Start the app in the `dev` environment.
+
+```bash
+$ npm run dev
+```
 
 ## Immediate Future
 #### Proof of Concept
