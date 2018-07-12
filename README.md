@@ -21,7 +21,9 @@ On the other hand, while other REST clients might have nice interfaces, they tak
 I think the first two objectives are attainable, but it would take me a long time to achieve. Therefore, I want to keep the codebase easy to contribute to. Hopefully, we can achieve this third goal w/o sacrificing too much in terms of maintainability, scalability, and other best practices.
 
 ## Usage
-Binary install is coming soon. In the meantime, it is simple to compile from source to run the app. Full instructions are available at the [electron-react-boilerplate](https://github.com/chentsulin/electron-react-boilerplate) site. Short version is provided below:
+Binary install is available [here](https://github.com/johnwoolee/react-electron-rest-client/releases) for Windows platform.
+
+IF you want to work with the source or if you'd like to try this on Mac/Linux, it is simple to compile from source to run the app locally. Full instructions are available at the [electron-react-boilerplate](https://github.com/chentsulin/electron-react-boilerplate) site. Short version is provided below:
 
 ### Install
 
