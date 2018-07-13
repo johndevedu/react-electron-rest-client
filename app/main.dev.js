@@ -10,10 +10,12 @@
  *
  * @flow
  */
+import fs from "fs";
 import { app, BrowserWindow } from "electron";
 import MenuBuilder from "./menu";
 import React from "react";
 import { renderToString } from "react-dom/server";
+import { JssProvider, SheetsRegistry } from "react-jss";
 import RequestPage from "./containers/RequestPage";
 
 let mainWindow = null;
@@ -69,26 +71,58 @@ app.on("ready", async () => {
     height: 728
   });
 
-  const jsx = <RequestPage />;
+  const sheets = new SheetsRegistry();
+
+  const jsx = (
+    <JssProvider registry={sheets}>
+      <RequestPage />
+    </JssProvider>
+  );
+
   const reactDom = renderToString(jsx);
-  console.log(reactDom);
-  const html = htmlTemplate(reactDom);
+  const reactDomHtml = htmlTemplate(reactDom, sheets);
 
-  var file = "data:text/html;charset=UTF-8," + encodeURIComponent(html);
-  // window.loadURL(file);
-  mainWindow.loadURL(file);
+  // console.log(reactDomHtml);
 
+  //var dataHtml = "data:text/html;charset=UTF-8," + encodeURIComponent(html);
+  // mainWindow.loadURL(dataHtml);
+
+  let htmlFile;
+
+  // htmlFile = `file://${__dirname}/app.prod.html`;
+  fs.writeFileSync(`${__dirname}/app.prod.html`, reactDomHtml);
+  // if (process.env.NODE_ENV === "production") {
+  //   htmlFile = `file://${__dirname}/app.prod.html`;
+  //   fs.writeFileSync(htmlFile, reactDomHtml, function(error) {
+  //     if (error) {
+  //       console.log("[write output]: " + err);
+  //       if (fail) fail(error);
+  //     } else {
+  //       console.log("[write output]: success");
+  //       if (success) success();
+  //     }
+  //   });
+  // } else {
+  //   htmlFile = `file://${__dirname}/app.html`;
+  // }
+
+  // htmlfile =
+  //   process.env.NODE_ENV === "development"
+  //     ? `file://${__dirname}/app.html`
+  //     : `file://${__dirname}/app.prod.html`;
   // mainWindow.loadURL(`file://${__dirname}/app.html`);
+
+  mainWindow.loadURL(`file://${__dirname}/app.prod.html`);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
-  mainWindow.webContents.on("did-finish-load", () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-    mainWindow.show();
-    mainWindow.focus();
-  });
+  // mainWindow.webContents.on("did-finish-load", () => {
+  //   if (!mainWindow) {
+  //     throw new Error('"mainWindow" is not defined');
+  //   }
+  //   mainWindow.show();
+  //   mainWindow.focus();
+  // });
 
   mainWindow.on("closed", () => {
     mainWindow = null;
@@ -98,7 +132,7 @@ app.on("ready", async () => {
   menuBuilder.buildMenu();
 });
 
-function htmlTemplate(reactDom) {
+function htmlTemplate(reactDom, sheets) {
   return `
   <!DOCTYPE html>
   <html>
@@ -106,13 +140,15 @@ function htmlTemplate(reactDom) {
       <meta charset="utf-8">
       <title>Hello Electron React!</title>
       <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"> -->
-  
+      <style type="text/css" id="server-side-styles">
+      ${sheets.toString()}
+    </style>
       <script>
         (function() {
           if (!process.env.HOT) {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
-            link.href = './dist/style.css';
+            link.href = 'http://localhost:1212/dist/style.css';
             // HACK: Writing the script path should be done with webpack
             document.getElementsByTagName('head')[0].appendChild(link);
           }
@@ -130,7 +166,7 @@ function htmlTemplate(reactDom) {
           // Dynamically insert the DLL script in development env in the
           // renderer process
           if (process.env.NODE_ENV === 'development') {
-            scripts.push('../dll/renderer.dev.dll.js');
+            scripts.push('file:///C:/sf.code/JOHNLEE/react-electron-rest-client/dll/renderer.dev.dll.js');
           }
   
           // Dynamically insert the bundled app script in the renderer process
