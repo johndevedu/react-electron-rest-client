@@ -9,7 +9,8 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import { Button, Typography, Grid } from "../../node_modules/@material-ui/core";
+import { Button, Typography, Grid, ListItem, ListItemIcon, ListItemText, List, Divider, Drawer } from "../../node_modules/@material-ui/core";
+import { MoveToInbox as InboxIcon, Send as SendIcon, Star as StarIcon, Drafts as DraftsIcon } from "@material-ui/icons"
 import RequestBody from "./RequestBody";
 
 import * as requestService from '../services/request.service'
@@ -26,11 +27,46 @@ const styles = theme => ({
   },
   formControlWide: {
     minWidth: "400px"
-  }
+  },
+  list: {
+    width: 250,
+  },
+  fullList: {
+    width: 'auto',
+  },
 });
 
 const httpMethods = ["GET", "POST", "PUT", "DELETE", "PATCH"];
 const httpMethodsWithBody = ["POST", "PUT", "PATCH"];
+
+const mailFolderListItems = (
+  <div>
+    <ListItem button>
+      <ListItemIcon>
+        <InboxIcon />
+      </ListItemIcon>
+      <ListItemText primary="Inbox" />
+    </ListItem>
+    <ListItem button>
+      <ListItemIcon>
+        <StarIcon />
+      </ListItemIcon>
+      <ListItemText primary="Starred" />
+    </ListItem>
+    <ListItem button>
+      <ListItemIcon>
+        <SendIcon />
+      </ListItemIcon>
+      <ListItemText primary="Send mail" />
+    </ListItem>
+    <ListItem button>
+      <ListItemIcon>
+        <DraftsIcon />
+      </ListItemIcon>
+      <ListItemText primary="Drafts" />
+    </ListItem>
+  </div>
+);
 
 class RequestPage extends Component {
   constructor(props) {
@@ -84,14 +120,40 @@ class RequestPage extends Component {
       .catch(console.error)
   }
 
+  toggleDrawer = (side, open) => () => {
+    debugger;
+    this.setState({
+      [side]: open,
+    });
+  };
+
+
   render() {
     const { classes } = this.props;
+
+    const sideList = (
+      <div className={classes.list}>
+        <List>{mailFolderListItems}</List>
+        <Divider />
+      </div>
+    );
 
     return (
       <div>
         <Typography variant="title" gutterBottom>
           Request
         </Typography>
+        <Button onClick={this.toggleDrawer('left', true)}>Open Left</Button>
+        <Drawer open={this.state.left} onClose={this.toggleDrawer('left', false)}>
+          <div
+            tabIndex={0}
+            role="button"
+            onClick={this.toggleDrawer('left', false)}
+            onKeyDown={this.toggleDrawer('left', false)}
+          >
+            {sideList}
+          </div>
+        </Drawer>
 
         <form onSubmit={this.onSend}>
           <Grid container spacing={24} style={{ padding: 24 }}>
