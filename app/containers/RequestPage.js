@@ -63,11 +63,21 @@ class RequestPage extends Component {
       config.data = parsedBody;
     }
 
-    axios(this.state.url, config).then(response => {
-      this.setState({
-        data: response.data
+    axios(this.state.url, config)
+      .then(response => {
+        this.setState({
+          data: response.data
+        });
+      })
+      .catch(error => {
+        if (error && error.response && error.response.data && error.response.data.errors) {
+          console.error(error.response.data.errors);
+        }
+        else {
+          console.error(error);
+        }
+        return Promise.reject(error);
       });
-    });
   }
 
   render() {
