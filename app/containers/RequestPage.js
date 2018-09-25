@@ -12,7 +12,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { Button, Typography, Grid } from "../../node_modules/@material-ui/core";
 import RequestBody from "./RequestBody";
 
-import requestService from '../services/request.service'
+import * as requestService from '../services/request.service'
+import * as requestStorageService from '../services/request-storage.service'
+import RequestHistory from "./RequestHistory";
 
 const styles = theme => ({
   container: {
@@ -37,7 +39,8 @@ class RequestPage extends Component {
       methodType: "GET",
       url: "http://localhost:8080/api/hackers",
       requestBody: "",
-      data: []
+      data: [],
+      historyItems: []
     };
 
     this.onChange = this.onChange.bind(this);
@@ -65,11 +68,18 @@ class RequestPage extends Component {
       config.data = parsedBody;
     }
 
-    requestService.request(url, config)
+    requestService.request(this.state.url, config)
       .then(data => {
         this.setState({
           data: data
         })
+
+        requestStorageService.getAll()
+          .then(items => {
+            debugger;
+            this.setState({ historyItems: items })
+          })
+          .catch(console.error)
       })
       .catch(console.error)
   }
@@ -122,6 +132,7 @@ class RequestPage extends Component {
             <RequestBody onChange={this.onChange} />
           )
         }
+        <RequestHistory historyItems={this.state.historyItems} />
 
         < Typography variant="title" gutterBottom >
           Response
