@@ -12,6 +12,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { Button, Typography, Grid } from "../../node_modules/@material-ui/core";
 import RequestBody from "./RequestBody";
 
+import requestService from '../services/request.service'
+
 const styles = theme => ({
   container: {
     display: "flex",
@@ -63,21 +65,13 @@ class RequestPage extends Component {
       config.data = parsedBody;
     }
 
-    axios(this.state.url, config)
-      .then(response => {
+    requestService.request(url, config)
+      .then(data => {
         this.setState({
-          data: response.data
-        });
+          data: data
+        })
       })
-      .catch(error => {
-        if (error && error.response && error.response.data && error.response.data.errors) {
-          console.error(error.response.data.errors);
-        }
-        else {
-          console.error(error);
-        }
-        return Promise.reject(error);
-      });
+      .catch(console.error)
   }
 
   render() {
@@ -123,15 +117,17 @@ class RequestPage extends Component {
           </Grid>
         </form>
 
-        {httpMethodsWithBody.includes(this.state.methodType) && (
-          <RequestBody onChange={this.onChange} />
-        )}
+        {
+          httpMethodsWithBody.includes(this.state.methodType) && (
+            <RequestBody onChange={this.onChange} />
+          )
+        }
 
-        <Typography variant="title" gutterBottom>
+        < Typography variant="title" gutterBottom >
           Response
-        </Typography>
+        </Typography >
         <pre>{JSON.stringify(this.state.data, null, 2)}</pre>
-      </div>
+      </div >
     );
   }
 }
