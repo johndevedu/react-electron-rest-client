@@ -26,6 +26,7 @@ class RequestBody extends Component {
           onChange={this.props.onChange}
           className={classes.textField}
           margin="normal"
+          value={this.props.body}
         />
       </div>
     );

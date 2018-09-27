@@ -52,6 +52,7 @@ class RequestPage extends Component {
     this.onChange = this.onChange.bind(this);
     this.onSend = this.onSend.bind(this);
     this.getHistory = this.getHistory.bind(this);
+    this.onHistoryItemClicked = this.onHistoryItemClicked.bind(this);
   }
 
   componentDidMount() {
@@ -62,6 +63,15 @@ class RequestPage extends Component {
     this.setState({
       [e.target.name]: e.target.value
     });
+  }
+
+  onHistoryItemClicked(item) {
+    debugger;
+    this.setState({
+      url: item.url,
+      requestBody: JSON.stringify(item.config.data, null, 2),
+      methodType: item.config.method
+    })
   }
 
   onSend(e) {
@@ -161,7 +171,7 @@ class RequestPage extends Component {
                 <Grid item xs={12}>
                   {
                     httpMethodsWithBody.includes(this.state.methodType) && (
-                      <RequestBody onChange={this.onChange} />
+                      <RequestBody body={this.state.requestBody} onChange={this.onChange} />
                     )
                   }
 
@@ -177,7 +187,7 @@ class RequestPage extends Component {
             </div>
           </Grid>
           <Grid container item xs={12} md={4}>
-            <RequestHistory historyItems={this.state.historyItems} />
+            <RequestHistory historyItems={this.state.historyItems} onItemClick={this.onHistoryItemClicked} />
           </Grid>
 
 
