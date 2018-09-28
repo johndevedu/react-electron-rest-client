@@ -46,17 +46,21 @@ class RequestPage extends Component {
       url: "http://localhost:8080/api/cars",
       requestBody: "",
       data: [],
-      historyItems: []
+      historyItems: [],
+      searchText: ""
     };
 
     this.onChange = this.onChange.bind(this);
     this.onSend = this.onSend.bind(this);
+    this.getHistoryAll = this.getHistoryAll.bind(this);
     this.getHistory = this.getHistory.bind(this);
     this.onHistoryItemClicked = this.onHistoryItemClicked.bind(this);
   }
 
   componentDidMount() {
     this.getHistory();
+
+
   }
 
   onChange(e) {
@@ -66,7 +70,7 @@ class RequestPage extends Component {
   }
 
   onHistoryItemClicked(item) {
-    debugger;
+
     this.setState({
       url: item.url,
       requestBody: JSON.stringify(item.config.data, null, 2),
@@ -98,13 +102,22 @@ class RequestPage extends Component {
         this.getHistory();
       })
       .catch(console.error)
+
+
+  }
+
+  getHistoryAll() {
+    requestStorageService.getAllExt({ limit: 1000 }).then(items => {
+      this.setState({ historyItems: items })
+    })
+      .catch(console.error)
   }
 
   getHistory() {
-    requestStorageService.getAll()
-      .then(items => {
-        this.setState({ historyItems: items })
-      })
+
+    requestStorageService.getAllExt().then(items => {
+      this.setState({ historyItems: items })
+    })
       .catch(console.error)
   }
 
@@ -126,7 +139,7 @@ class RequestPage extends Component {
 
                 <Grid item xs={12}>
                   <form onSubmit={this.onSend}>
-                    <Grid container xs={12} sm={12} spacing={24}>
+                    <Grid container xs={12} sm={12} alignItems="center" spacing={24}>
                       <Grid item xs={2}>
                         <FormControl fullWidth className={classes.formControl}>
                           <InputLabel htmlFor="method-type">METHOD TYPE</InputLabel>
@@ -159,7 +172,7 @@ class RequestPage extends Component {
                           />
                         </FormControl>
                       </Grid>
-                      <Grid item xs={2}><Button type="submit" onClick={this.onSend}>SEND</Button></Grid>
+                      <Grid item xs={2}><Button variant="outlined" type="submit" onClick={this.onSend}>SEND</Button></Grid>
                     </Grid>
 
 
@@ -187,7 +200,26 @@ class RequestPage extends Component {
             </div>
           </Grid>
           <Grid container item xs={12} md={4}>
-            <RequestHistory historyItems={this.state.historyItems} onItemClick={this.onHistoryItemClicked} />
+            <Grid container item xs={12} alignItems="flex-end"
+              style={{
+                paddingBottom: "20px",
+                paddingTop: "10px"
+              }}>
+              <Grid item xs={4}>
+                <Button type="submit" variant="outlined" onClick={this.getHistoryAll}>Load All History</Button>
+              </Grid>
+              <Grid item xs={8}>
+                <FormControl fullWidth>
+                  <InputLabel htmlFor="searchText">Search</InputLabel>
+                  <Input
+                    name="searchText"
+                    value={this.state.searchText}
+                    onChange={this.onChange}
+                  />
+                </FormControl>
+              </Grid>
+            </Grid>
+            <RequestHistory searchText={this.state.searchText} historyItems={this.state.historyItems} onItemClick={this.onHistoryItemClicked} />
           </Grid>
 
 

@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as requestStorage from './request-storage.service';
 
 const request = (url, config) => {
-  debugger;
+
   const time = (new Date()).getTime();
   requestStorage.set(time, url, config);
 
