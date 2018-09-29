@@ -9,7 +9,7 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import { Button, Typography, Grid, Paper } from "../../node_modules/@material-ui/core";
+import { Button, CircularProgress, Typography, Grid, Paper } from "../../node_modules/@material-ui/core";
 import RequestBody from "./RequestBody";
 
 import * as requestService from '../services/request.service'
@@ -45,9 +45,10 @@ class RequestPage extends Component {
       methodType: "GET",
       url: "http://localhost:8080/api/cars",
       requestBody: "",
-      data: [],
+      data: "",
       historyItems: [],
-      searchText: ""
+      searchText: "",
+      isInProgress: false
     };
 
     this.onChange = this.onChange.bind(this);
@@ -59,8 +60,6 @@ class RequestPage extends Component {
 
   componentDidMount() {
     this.getHistory();
-
-
   }
 
   onChange(e) {
@@ -80,6 +79,11 @@ class RequestPage extends Component {
 
   onSend(e) {
     e.preventDefault();
+
+    this.setState({
+      isInProgress: true
+    })
+
     const selectedMethod = this.state.methodType;
     const config = {
       method: selectedMethod
@@ -96,12 +100,19 @@ class RequestPage extends Component {
     requestService.request(this.state.url, config)
       .then(data => {
         this.setState({
-          data: data
+          data: data,
+          isInProgress: false
         })
 
         this.getHistory();
       })
-      .catch(console.error)
+      .catch(err => {
+        this.setState({
+          isInProgress: false,
+          data: err.message
+        })
+        console.error(err);
+      })
 
 
   }
@@ -191,7 +202,9 @@ class RequestPage extends Component {
                   < Typography variant="title" gutterBottom >
                     Response
             </Typography >
-                  <pre>{JSON.stringify(this.state.data, null, 2)}</pre>
+                  {this.state.isInProgress && <CircularProgress />}
+
+                  <pre>{this.state.data && JSON.stringify(this.state.data, null, 2)}</pre>
                 </Grid>
 
 
