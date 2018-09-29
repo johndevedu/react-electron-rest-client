@@ -9,19 +9,29 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import { Button, Typography, Grid } from "../../node_modules/@material-ui/core";
+import { Button, Typography, Grid, Paper } from "../../node_modules/@material-ui/core";
 import RequestBody from "./RequestBody";
 
+import * as requestService from '../services/request.service'
+import * as requestStorageService from '../services/request-storage.service'
+import RequestHistory from "./RequestHistory";
+
 const styles = theme => ({
-  container: {
-    display: "flex",
-    flexWrap: "wrap"
-  },
+  // container: {
+  //   display: "flex",
+  //   flexWrap: "wrap"
+  // },
   formControl: {
     margin: theme.spacing.unit
   },
   formControlWide: {
     minWidth: "400px"
+  },
+  containerAlignTop: {
+    display: "flex",
+    flexFlow: "column",
+    alignItems: "flex-start",
+    width: "100%"
   }
 });
 
@@ -33,19 +43,39 @@ class RequestPage extends Component {
     super(props);
     this.state = {
       methodType: "GET",
-      url: "http://localhost:8080/api/hackers",
+      url: "http://localhost:8080/api/cars",
       requestBody: "",
-      data: []
+      data: [],
+      historyItems: [],
+      searchText: ""
     };
 
     this.onChange = this.onChange.bind(this);
     this.onSend = this.onSend.bind(this);
+    this.getHistoryAll = this.getHistoryAll.bind(this);
+    this.getHistory = this.getHistory.bind(this);
+    this.onHistoryItemClicked = this.onHistoryItemClicked.bind(this);
+  }
+
+  componentDidMount() {
+    this.getHistory();
+
+
   }
 
   onChange(e) {
     this.setState({
       [e.target.name]: e.target.value
     });
+  }
+
+  onHistoryItemClicked(item) {
+
+    this.setState({
+      url: item.url,
+      requestBody: JSON.stringify(item.config.data, null, 2),
+      methodType: item.config.method
+    })
   }
 
   onSend(e) {
@@ -63,11 +93,32 @@ class RequestPage extends Component {
       config.data = parsedBody;
     }
 
-    axios(this.state.url, config).then(response => {
-      this.setState({
-        data: response.data
-      });
-    });
+    requestService.request(this.state.url, config)
+      .then(data => {
+        this.setState({
+          data: data
+        })
+
+        this.getHistory();
+      })
+      .catch(console.error)
+
+
+  }
+
+  getHistoryAll() {
+    requestStorageService.getAllExt({ limit: 1000 }).then(items => {
+      this.setState({ historyItems: items })
+    })
+      .catch(console.error)
+  }
+
+  getHistory() {
+
+    requestStorageService.getAllExt().then(items => {
+      this.setState({ historyItems: items })
+    })
+      .catch(console.error)
   }
 
   render() {
@@ -75,53 +126,108 @@ class RequestPage extends Component {
 
     return (
       <div>
-        <Typography variant="title" gutterBottom>
-          Request
-        </Typography>
 
-        <form onSubmit={this.onSend}>
-          <Grid container spacing={24} style={{ padding: 24 }}>
-            <FormControl className={classes.formControl}>
-              <InputLabel htmlFor="method-type">METHOD TYPE</InputLabel>
-              <Select
-                value={this.state.methodType}
-                onChange={this.onChange}
-                inputProps={{
-                  name: "methodType",
-                  id: "method-type"
-                }}
-              >
-                {httpMethods.map(method => (
-                  <MenuItem key={method} value={method}>
-                    {method}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl
-              className={[classes.formControl, classes.formControlWide]}
-            >
-              <InputLabel htmlFor="url">URL</InputLabel>
-              <Input
-                id="url"
-                name="url"
-                value={this.state.url}
-                onChange={this.onChange}
-              />
-            </FormControl>
-            <Button onClick={this.onSend}>SEND</Button>
+        <Grid container spacing={24} >
+          <Grid container item xs={12} md={8}>
+            <div className={classes.containerAlignTop}>
+              <Grid container direction={"column"} justify={"flex-s"}>
+                <Grid item xs={12}>
+                  <Typography variant="title" gutterBottom>
+                    Request
+              </Typography>
+                </Grid>
+
+                <Grid item xs={12}>
+                  <form onSubmit={this.onSend}>
+                    <Grid container xs={12} sm={12} alignItems="center" spacing={24}>
+                      <Grid item xs={2}>
+                        <FormControl fullWidth className={classes.formControl}>
+                          <InputLabel htmlFor="method-type">METHOD TYPE</InputLabel>
+                          <Select
+                            value={this.state.methodType}
+                            onChange={this.onChange}
+                            inputProps={{
+                              name: "methodType",
+                              id: "method-type"
+                            }}
+                          >
+                            {httpMethods.map(method => (
+                              <MenuItem key={method} value={method}>
+                                {method}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={8}>
+                        <FormControl fullWidth
+                          className={[classes.formControl, classes.formControlWide]}
+                        >
+                          <InputLabel htmlFor="url">URL</InputLabel>
+                          <Input
+                            id="url"
+                            name="url"
+                            value={this.state.url}
+                            onChange={this.onChange}
+                          />
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={2}><Button variant="outlined" type="submit" onClick={this.onSend}>SEND</Button></Grid>
+                    </Grid>
+
+
+
+                  </form>
+
+                </Grid>
+
+                <Grid item xs={12}>
+                  {
+                    httpMethodsWithBody.includes(this.state.methodType) && (
+                      <RequestBody body={this.state.requestBody} onChange={this.onChange} />
+                    )
+                  }
+
+                  < Typography variant="title" gutterBottom >
+                    Response
+            </Typography >
+                  <pre>{JSON.stringify(this.state.data, null, 2)}</pre>
+                </Grid>
+
+
+              </Grid>
+
+            </div>
           </Grid>
-        </form>
+          <Grid container item xs={12} md={4}>
+            <Grid container item xs={12} alignItems="flex-end"
+              style={{
+                paddingBottom: "20px",
+                paddingTop: "10px"
+              }}>
+              <Grid item xs={4}>
+                <Button type="submit" variant="outlined" onClick={this.getHistoryAll}>Load All History</Button>
+              </Grid>
+              <Grid item xs={8}>
+                <FormControl fullWidth>
+                  <InputLabel htmlFor="searchText">Search</InputLabel>
+                  <Input
+                    name="searchText"
+                    value={this.state.searchText}
+                    onChange={this.onChange}
+                  />
+                </FormControl>
+              </Grid>
+            </Grid>
+            <RequestHistory searchText={this.state.searchText} historyItems={this.state.historyItems} onItemClick={this.onHistoryItemClicked} />
+          </Grid>
 
-        {httpMethodsWithBody.includes(this.state.methodType) && (
-          <RequestBody onChange={this.onChange} />
-        )}
 
-        <Typography variant="title" gutterBottom>
-          Response
-        </Typography>
-        <pre>{JSON.stringify(this.state.data, null, 2)}</pre>
-      </div>
+
+
+        </Grid>
+
+      </div >
     );
   }
 }
