@@ -78,41 +78,52 @@ class RequestPage extends Component {
   }
 
   onSend(e) {
-    e.preventDefault();
+    try {
+      e.preventDefault();
 
-    this.setState({
-      isInProgress: true
-    })
+      this.setState({
+        isInProgress: true
+      })
 
-    const selectedMethod = this.state.methodType;
-    const config = {
-      method: selectedMethod
-    };
+      const selectedMethod = this.state.methodType;
+      const config = {
+        method: selectedMethod
+      };
 
-    if (
-      httpMethodsWithBody.includes(selectedMethod) &&
-      this.state.requestBody
-    ) {
-      const parsedBody = JSON.parse(this.state.requestBody);
-      config.data = parsedBody;
+      if (
+        httpMethodsWithBody.includes(selectedMethod) &&
+        this.state.requestBody
+      ) {
+        const parsedBody = JSON.parse(this.state.requestBody);
+        config.data = parsedBody;
+      }
+
+
+      requestService.request(this.state.url, config)
+        .then(data => {
+          this.setState({
+            data: data,
+            isInProgress: false
+          })
+
+          this.getHistory();
+        })
+        .catch(err => {
+          this.setState({
+            isInProgress: false,
+            data: err.message
+          })
+          console.error(err);
+        })
+    }
+    catch (e) {
+      debugger;
+      this.setState({
+        data: e.message,
+        isInProgress: false
+      })
     }
 
-    requestService.request(this.state.url, config)
-      .then(data => {
-        this.setState({
-          data: data,
-          isInProgress: false
-        })
-
-        this.getHistory();
-      })
-      .catch(err => {
-        this.setState({
-          isInProgress: false,
-          data: err.message
-        })
-        console.error(err);
-      })
 
 
   }
@@ -213,26 +224,35 @@ class RequestPage extends Component {
             </div>
           </Grid>
           <Grid container item xs={12} md={4}>
-            <Grid container item xs={12} alignItems="flex-end"
-              style={{
-                paddingBottom: "20px",
-                paddingTop: "10px"
-              }}>
-              <Grid item xs={4}>
-                <Button type="submit" variant="outlined" onClick={this.getHistoryAll}>Load All History</Button>
+            <div className={classes.containerAlignTop}>
+              <Grid container direction={"column"} justify={"flex-start"}>
+
+                <Grid container item xs={12} direction={"row"} alignItems={"flex-end"}
+                  style={{
+                    paddingBottom: "20px",
+                    paddingTop: "10px"
+                  }}>
+                  <Grid item xs={4}>
+                    <Button type="submit" variant="outlined" onClick={this.getHistoryAll}>Load All History</Button>
+                  </Grid>
+                  <Grid item xs={8}>
+                    <FormControl fullWidth>
+                      <InputLabel htmlFor="searchText">Search</InputLabel>
+                      <Input
+                        name="searchText"
+                        value={this.state.searchText}
+                        onChange={this.onChange}
+                      />
+                    </FormControl>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                  <div className={classes.containerAlignTop}>
+                    <RequestHistory searchText={this.state.searchText} historyItems={this.state.historyItems} onItemClick={this.onHistoryItemClicked} />
+                  </div>
+                </Grid>
               </Grid>
-              <Grid item xs={8}>
-                <FormControl fullWidth>
-                  <InputLabel htmlFor="searchText">Search</InputLabel>
-                  <Input
-                    name="searchText"
-                    value={this.state.searchText}
-                    onChange={this.onChange}
-                  />
-                </FormControl>
-              </Grid>
-            </Grid>
-            <RequestHistory searchText={this.state.searchText} historyItems={this.state.historyItems} onItemClick={this.onHistoryItemClicked} />
+            </div>
           </Grid>
 
 
