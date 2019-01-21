@@ -40,7 +40,7 @@ if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
 }
 
 export default merge.smart(baseConfig, {
-  devtool: 'inline-source-map',
+  devtool: 'cheap-module-source-map',
 
   mode: 'development',
 
@@ -55,7 +55,7 @@ export default merge.smart(baseConfig, {
 
   output: {
     publicPath: `http://localhost:${port}/dist/`,
-    filename: 'renderer.dev.js'
+    filename: 'renderer.dev.js',
   },
 
   module: {
@@ -258,7 +258,6 @@ export default merge.smart(baseConfig, {
     stats: 'errors-only',
     inline: true,
     lazy: false,
-    hot: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
     contentBase: path.join(__dirname, 'dist'),
     watchOptions: {

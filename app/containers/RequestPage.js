@@ -51,6 +51,7 @@ class RequestPage extends Component {
       isInProgress: false
     };
 
+
     this.onChange = this.onChange.bind(this);
     this.onSend = this.onSend.bind(this);
     this.getHistoryAll = this.getHistoryAll.bind(this);
@@ -153,7 +154,7 @@ class RequestPage extends Component {
         <Grid container spacing={24} >
           <Grid container item xs={12} md={8}>
             <div className={classes.containerAlignTop}>
-              <Grid container direction={"column"} justify={"flex-s"}>
+              <Grid container direction={"column"} justify={"flex-start"}>
                 <Grid item xs={12}>
                   <Typography variant="title" gutterBottom>
                     Request
@@ -162,7 +163,7 @@ class RequestPage extends Component {
 
                 <Grid item xs={12}>
                   <form onSubmit={this.onSend}>
-                    <Grid container xs={12} sm={12} alignItems="center" spacing={24}>
+                    <Grid container alignItems="center" spacing={24}>
                       <Grid item xs={2}>
                         <FormControl fullWidth className={classes.formControl}>
                           <InputLabel htmlFor="method-type">METHOD TYPE</InputLabel>
@@ -184,7 +185,7 @@ class RequestPage extends Component {
                       </Grid>
                       <Grid item xs={8}>
                         <FormControl fullWidth
-                          className={[classes.formControl, classes.formControlWide]}
+                          className={classes.formControl + " " + classes.formControlWide}
                         >
                           <InputLabel htmlFor="url">URL</InputLabel>
                           <Input
