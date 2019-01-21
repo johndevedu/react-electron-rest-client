@@ -7,7 +7,7 @@ const request = (url, config) => {
   requestStorage.set(time, url, config);
 
   return axios(url, config)
-    .then(response => response.data)
+    .then(response => response)
     .catch(error => {
       if (error && error.response && error.response.data && error.response.data.errors) {
         console.error(error.response.data.errors);
