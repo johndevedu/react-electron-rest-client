@@ -166,7 +166,7 @@ function htmlTemplate(reactDom, sheets) {
           // Dynamically insert the DLL script in development env in the
           // renderer process
           if (process.env.NODE_ENV === 'development') {
-            scripts.push('file:///C:/sf.code/JOHNLEE/react-electron-rest-client/dll/renderer.dev.dll.js');
+            scripts.push('../dll/renderer.dev.dll.js');
           }
   
           // Dynamically insert the bundled app script in the renderer process
