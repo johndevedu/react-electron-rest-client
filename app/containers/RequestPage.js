@@ -32,6 +32,24 @@ const styles = theme => ({
     flexFlow: "column",
     alignItems: "flex-start",
     width: "100%"
+  },
+  status: {
+    fontFamily: "Roboto",
+    fontSize: "13px",
+    padding: "1px",
+    borderRadius: "3px",
+    position: "relative",
+    top: "-2px",
+    paddingBottom: "1px",
+    paddingRight: "4px",
+    paddingLeft: "4px",
+    color: "white",
+  },
+  statusSuccess: {
+    backgroundColor: "green",
+  },
+  statusError: {
+    backgroundColor: "red"
   }
 });
 
@@ -48,7 +66,8 @@ class RequestPage extends Component {
       data: "",
       historyItems: [],
       searchText: "",
-      isInProgress: false
+      isInProgress: false,
+      status: "",
     };
 
     this.onChange = this.onChange.bind(this);
@@ -100,25 +119,26 @@ class RequestPage extends Component {
 
 
       requestService.request(this.state.url, config)
-        .then(data => {
+        .then(response => {
+          console.log(response.data)
           this.setState({
-            data: data,
-            isInProgress: false
+            data: response.data,
+            isInProgress: false,
+            status: response.status,
           })
-
           this.getHistory();
         })
         .catch(err => {
           this.setState({
             isInProgress: false,
-            data: err.message
+            data: err.message,
+            status: err.response.status
           })
           this.getHistory();
           console.error(err);
         })
     }
     catch (e) {
-      debugger;
       this.setState({
         data: e.message,
         isInProgress: false
@@ -146,6 +166,13 @@ class RequestPage extends Component {
 
   render() {
     const { classes } = this.props;
+
+    let statusClasses = classes.status;
+    if (this.state.status && this.state.status === 200) {
+      statusClasses = statusClasses + ' ' + classes.statusSuccess;
+    } else if (this.state.status && this.state.status !== 200) {
+      statusClasses = statusClasses + ' ' + classes.statusError;
+    }
 
     return (
       <div>
@@ -212,8 +239,9 @@ class RequestPage extends Component {
                   }
 
                   < Typography variant="title" gutterBottom >
-                    Response
-            </Typography >
+                  Response <span className={statusClasses}>{this.state.status}</span>
+                   </Typography >
+  
                   {this.state.isInProgress && <CircularProgress />}
 
                   <pre>{this.state.data && JSON.stringify(this.state.data, null, 2)}</pre>
