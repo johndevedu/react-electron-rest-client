@@ -113,6 +113,7 @@ class RequestPage extends Component {
             isInProgress: false,
             data: err.message
           })
+          this.getHistory();
           console.error(err);
         })
     }
